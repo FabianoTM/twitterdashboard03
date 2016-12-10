@@ -1,21 +1,77 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
+
 <head>
-	<title>PHP Starter Application</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" href="style.css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-	<table>
-		<tr>
-			<td style='width: 30%;'>
-				<img class = 'newappIcon' src='images/newapp-icon.png'>
-			</td>
-			<td>
-				<h1 id = "message"><?php echo "Hello World!"; ?></h1>
-				<p class='description'></p> Thanks for creating a <span class="blue">PHP Starter Application</span>.
-			</td>
-		</tr>
-	</table>
+
+	<div id="chartContainer" style="height:400px; width:100%;"></div>
+
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="canvasjs.min.js"></script>
+	<script type="text/javascript">
+
+		$.ajax({
+			url: 'client.php',			
+			success: function(data) {
+
+				var json = JSON.parse(data);
+
+				var tweets = "tweets: " + json.total_rows;
+
+				var dps = [		
+					{label: "Falando Bem", y: json.good_tweets},
+					{label: "Falando Mal", y: json.bad_tweets}				
+				];
+
+				var chart = new CanvasJS.Chart("chartContainer",{
+					theme: "theme2",
+					title:{ 
+						text: "O que estão falando da Fiap?"
+					},
+					legend:{
+						verticalAlign: "top",
+						horizontalAlign: "centre",
+						fontSize: 18
+
+					},
+					data : [{
+						type: "column",
+						showInLegend: true,
+						legendMarkerType: "none",				
+						legendText: tweets,
+						indexLabel: "{y}",
+						dataPoints: dps
+					}]
+				});
+
+				chart.render();
+
+				var connection = new WebSocket('wss://socket-server03.mybluemix.net');
+				connection.onopen = function () {
+				  connection.send('Ping');
+				};
+				
+				connection.onerror = function (error) {
+				  console.log('WebSocket Error ' + error);
+				};
+
+				connection.onmessage = function (e) {				  	
+				  	var json = JSON.parse(e.data);	
+
+				  	dps[0].y = json.good_tweets;
+					dps[1].y = json.bad_tweets;					
+					totalEmployees = "tweets: " + json.total_rows;			
+					chart.options.data[0].legendText = totalEmployees;	
+
+					chart.render();
+				  
+				};
+
+			}
+		});
+
+		</script>
 </body>
-</html>
+
