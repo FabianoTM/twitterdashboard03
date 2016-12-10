@@ -3,6 +3,6 @@ applications:
   memory: 128M
   instances: 1
   domain: mybluemix.net
-  name: dashboard-client
-  host: dashboard-client
+  name: twitterdashboard03
+  host: twitterdashboard03
   disk_quota: 1024M
