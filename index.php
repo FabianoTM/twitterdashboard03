@@ -11,7 +11,7 @@
 	<script type="text/javascript" src="jquery.min.js"></script>
 	<script type="text/javascript" src="canvasjs.min.js"></script>
 	<script type="text/javascript">
-
+ $(document).ready(function() { 
 		$.ajax({
 			url: 'client.php',			
 			success: function(data) {
@@ -71,7 +71,7 @@
 
 			}
 		});
-
+});
 		</script>
 </body>
 
